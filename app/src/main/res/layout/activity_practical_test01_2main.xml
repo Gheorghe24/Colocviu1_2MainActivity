@@ -1,0 +1,46 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Prima linie: camp text editabil si buton add -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/next_term"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter term" />
+
+        <Button
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add" />
+    </LinearLayout>
+
+    <!-- A doua linie: camp text needitabil -->
+    <TextView
+        android:id="@+id/all_terms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All terms will appear here"
+        android:padding="8dp"
+        android:background="#E0E0E0"
+        android:gravity="center_vertical"/>
+
+    <!-- A treia linie: buton Compute -->
+    <Button
+        android:id="@+id/compute_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Compute"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
