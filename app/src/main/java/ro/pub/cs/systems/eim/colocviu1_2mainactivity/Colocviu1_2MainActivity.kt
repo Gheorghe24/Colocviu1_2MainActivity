@@ -7,17 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ro.pub.cs.systems.eim.colocviu1_2mainactivity.ui.theme.Colocviu1_2MainActivityTheme
 
 class Colocviu1_2MainActivity : ComponentActivity() {
 
@@ -26,12 +16,13 @@ class Colocviu1_2MainActivity : ComponentActivity() {
     private lateinit var addButton: Button
     private lateinit var computeButton: Button
     private val allTerms = StringBuilder()
+    private var previousResult: Int? = null
 
     private val computeActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val data = result.data
-            val sum = data?.getIntExtra("RESULT", 0)
-            Toast.makeText(this, "Sum: $sum", Toast.LENGTH_LONG).show()
+            previousResult = data?.getIntExtra("RESULT", 0)
+            Toast.makeText(this, "Sum: $previousResult", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -43,6 +34,12 @@ class Colocviu1_2MainActivity : ComponentActivity() {
         allTermsTextView = findViewById(R.id.all_terms)
         addButton = findViewById(R.id.add_button)
         computeButton = findViewById(R.id.compute_button)
+
+        if (savedInstanceState != null) {
+            allTerms.append(savedInstanceState.getString("ALL_TERMS", ""))
+            previousResult = savedInstanceState.getInt("PREVIOUS_RESULT")
+            allTermsTextView.text = allTerms.toString()
+        }
 
         addButton.setOnClickListener {
             val term = nextTermEditText.text.toString()
@@ -57,10 +54,30 @@ class Colocviu1_2MainActivity : ComponentActivity() {
         }
 
         computeButton.setOnClickListener {
-            val intent = Intent(this, Colocviu1_2SecondActivity::class.java).apply {
-                putExtra("ALL_TERMS", allTerms.toString())
+            val currentAllTerms = allTerms.toString()
+            if (currentAllTerms == savedInstanceState?.getString("ALL_TERMS")) {
+                Toast.makeText(this, "Sum: $previousResult", Toast.LENGTH_LONG).show()
+            } else {
+                val intent = Intent(this, Colocviu1_2SecondActivity::class.java).apply {
+                    putExtra("ALL_TERMS", currentAllTerms)
+                }
+                computeActivityResultLauncher.launch(intent)
             }
-            computeActivityResultLauncher.launch(intent)
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("ALL_TERMS", allTerms.toString())
+        previousResult?.let { outState.putInt("PREVIOUS_RESULT", it) }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        allTerms.append(savedInstanceState.getString("ALL_TERMS", ""))
+        previousResult = savedInstanceState.getInt("PREVIOUS_RESULT")
+        allTermsTextView.text = allTerms.toString()
+    }
+
+    // startServiceIfSumisgreaterthan10
 }
